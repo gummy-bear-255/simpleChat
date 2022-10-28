@@ -1,24 +1,8 @@
-// This file contains material supporting section 3.7 of the textbook:
-// "Object Oriented Software Engineering" and is issued under the open-source
-// license found at www.lloseng.com 
-
 import java.io.*;
 import java.util.Scanner;
-
-import client.*;
 import common.*;
 
-/**
- * This class constructs the UI for a chat client.  It implements the
- * chat interface in order to activate the display() method.
- * Warning: Some of the code here is cloned in ServerConsole 
- *
- * @author Fran&ccedil;ois B&eacute;langer
- * @author Dr Timothy C. Lethbridge  
- * @author Dr Robert Lagani&egrave;re
- * @version September 2020
- */
-public class ClientConsole implements ChatIF 
+public class ServerConsole implements ChatIF 
 {
   //Class variables *************************************************
   
@@ -32,8 +16,7 @@ public class ClientConsole implements ChatIF
   /**
    * The instance of the client that created this ConsoleChat.
    */
-  ChatClient client;
-  
+  EchoServer server;
   
   
   /**
@@ -50,18 +33,27 @@ public class ClientConsole implements ChatIF
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientConsole(String loginID, String host, int port) 
+  public ServerConsole(int port) 
   {
     try 
     {
-      client= new ChatClient(loginID, host, port, this);
+      server= new EchoServer(port, this);
       
       
     } 
     catch(IOException exception) 
     {
-      System.out.println("ERROR - Can't setup connection! Terminating client.");
+      System.out.println("Error: Can't setup connection!"
+                + " Terminating client.");
       System.exit(1);
+    }
+    try
+    {
+      server.listen(); //Start listening for connections
+    }
+    catch (Exception ex)
+    {
+      System.out.println("ERROR - Could not listen for clients!");
     }
     
     // Create scanner object to read from console
@@ -85,7 +77,7 @@ public class ClientConsole implements ChatIF
       while (true) 
       {
         message = fromConsole.nextLine();
-        client.handleMessageFromClientUI(message);
+        server.handleMessageFromServerUI(message);
       }
     } 
     catch (Exception ex) 
@@ -110,39 +102,28 @@ public class ClientConsole implements ChatIF
   //Class methods ***************************************************
   
   /**
-   * This method is responsible for the creation of the Client UI.
+   * This method is responsible for the creation of the Server UI.
    *
-   * @param args[0] The host to connect to.
+   * @param args[0] The port to connect to.
    */
   public static void main(String[] args) 
   {
-	String loginID = "";
-    String host = "";
     int port = 0;
 
     try
     {
-      loginID = args[0];
-    }
-    catch(ArrayIndexOutOfBoundsException e){
-    	System.out.println("ERROR - No login ID specified.  Connection aborted.");
-    	System.exit(1);
-    }
-    try {
-    	host = args[1];
-        port = Integer.parseInt(args[2]);
+      port = Integer.parseInt(args[0]);
     }
     catch(ArrayIndexOutOfBoundsException e)
     {
-      host = "localhost";
       port = DEFAULT_PORT;
     }
     catch(NumberFormatException ne) {
     	port = DEFAULT_PORT;
     }
     
-    ClientConsole chat= new ClientConsole(loginID, host, port);
-    chat.accept();  //Wait for console data
+    ServerConsole server = new ServerConsole(port);
+    server.accept();  //Wait for console data
   }
 }
-//End of ConsoleChat class
+//End of ServerConsole class
