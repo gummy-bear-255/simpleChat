@@ -2,6 +2,16 @@ import java.io.*;
 import java.util.Scanner;
 import common.*;
 
+/**
+ * This class constructs the UI for a Echo server.  It implements the
+ * chat interface in order to activate the display() method.
+ * Warning: Some of the code here is cloned in ClientConsole. 
+ *
+ * @author Fran&ccedil;ois B&eacute;langer
+ * @author Dr Timothy C. Lethbridge  
+ * @author Dr Robert Lagani&egrave;re
+ * @version September 2020
+ */
 public class ServerConsole implements ChatIF 
 {
   //Class variables *************************************************
@@ -14,7 +24,7 @@ public class ServerConsole implements ChatIF
   //Instance variables **********************************************
   
   /**
-   * The instance of the client that created this ConsoleChat.
+   * The instance of the server that created this Console.
    */
   EchoServer server;
   
@@ -28,9 +38,8 @@ public class ServerConsole implements ChatIF
   //Constructors ****************************************************
 
   /**
-   * Constructs an instance of the ClientConsole UI.
+   * Constructs an instance of the ServerConsole UI.
    *
-   * @param host The host to connect to.
    * @param port The port to connect on.
    */
   public ServerConsole(int port) 
@@ -65,7 +74,7 @@ public class ServerConsole implements ChatIF
   
   /**
    * This method waits for input from the console.  Once it is 
-   * received, it sends it to the client's message handler.
+   * received, it sends it to the server's message handler.
    */
   public void accept() 
   {

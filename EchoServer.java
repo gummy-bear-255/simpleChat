@@ -20,11 +20,10 @@ public class EchoServer extends AbstractServer
 {
   //Class variables *************************************************
 	
-	final private String key = "loginKey";
   /**
-   * The default port to listen on.
+   * The key to set loginID info.
    */
-  final public static int DEFAULT_PORT = 5555;
+  final private String key = "loginKey";
   
   /**
    * The interface type variable.  It allows the implementation of 
@@ -87,6 +86,11 @@ public class EchoServer extends AbstractServer
 	  }
   }
   
+  /**
+   * This method handles all commands (data starting with #) coming from the UI            
+   *
+   * @param cmd The command from the UI.    
+   */
   public void handleCommand(String cmd) {
 	  if(cmd.equals("#quit")) {
 		  serverUI.display("The server will quit.");
@@ -99,7 +103,9 @@ public class EchoServer extends AbstractServer
 		  try {
 			  close();
 		  }
-		  catch(IOException e){}
+		  catch(IOException e){
+			  serverUI.display("Could not close server.");
+		  }
 	  }
 	  else if(cmd.startsWith("#setport")) {
 		  if(this.getNumberOfClients() == 0 && !this.isListening()) {
@@ -108,11 +114,11 @@ public class EchoServer extends AbstractServer
 				  serverUI.display("Port changed to " + getPort());
 			  }
 			  catch(Exception e) {
-				  serverUI.display("Unexpected error while setting server port!");
+				  serverUI.display("Unexpected error while setting server port.");
 			  }
 		  }
 		  else {
-			  serverUI.display("Server is still open");
+			  serverUI.display("Server is still open.");
 			  
 		  }
 	  }
@@ -121,11 +127,11 @@ public class EchoServer extends AbstractServer
 			  try {
 					listen();
 				} catch (Exception e) {
-					serverUI.display("Could not listen for clients!");
+					serverUI.display("Could not listen for clients.");
 				}
 		  }
 		  else {
-			  serverUI.display("Server is already started");
+			  serverUI.display("Server is already started.");
 		  }
 	  }
 	  else if(cmd.equals("#getport")) {
@@ -187,6 +193,20 @@ public class EchoServer extends AbstractServer
    */
   @Override
   synchronized protected void clientDisconnected(ConnectionToClient client) {
+	  serverUI.display(client.getInfo(key) + " has disconnected.");
+  }
+  
+  /**
+   * Hook method called each time an exception is thrown in a
+   * ConnectionToClient thread.
+   * The method may be overridden by subclasses but should remains
+   * synchronized.
+   *
+   * @param client the client that raised the exception.
+   * @param Throwable the exception thrown.
+   */
+  synchronized protected void clientException(
+    ConnectionToClient client, Throwable exception) {
 	  serverUI.display(client.getInfo(key) + " has disconnected.");
   }
 }

@@ -27,6 +27,9 @@ public class ChatClient extends AbstractClient
    */
   ChatIF clientUI; 
   
+  /**
+   * The client ID variable.
+   */
   String loginID;
   
   //Constructors ****************************************************
@@ -34,6 +37,7 @@ public class ChatClient extends AbstractClient
   /**
    * Constructs an instance of the chat client.
    *
+   * @param loginID The client to connect.
    * @param host The server to connect to.
    * @param port The port number to connect on.
    * @param clientUI The interface type variable.
@@ -85,6 +89,11 @@ public class ChatClient extends AbstractClient
     }
   }
   
+  /**
+   * This method handles all commands (data starting with #) coming from the UI            
+   *
+   * @param cmd The command from the UI.    
+   */
   private void handleCommand(String cmd) {
 	  if(cmd.equals("#quit")) {
 		  clientUI.display("The client will quit.");
